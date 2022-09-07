@@ -1,0 +1,13 @@
+RewriteEngine on
+
+RewriteRule ^home index.php [NC,L]
+
+#RewriteRule ^requisition pages/procurement/view-requisition.php [NC,L]
+
+#RewriteRule ^home pages/procurement/procurement-dash.php [NC,L]
+
+#ReWriteCond %{REQUEST_FILENAME} !-d
+
+#ReWriteCond %{REQUEST_FILENAME}\.php -f
+
+#ReWriteRule ^view-requisition/([0-9]+)/([0-9a-zA-Z-_-]+) pages/procurement/view-requisition.php?requisition_id=$1 [NC,L]
