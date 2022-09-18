@@ -148,6 +148,7 @@
   <link rel="stylesheet" href="../../dist/css/adminlte.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -682,7 +683,7 @@
                         <div class="btn-group">
 						  <a class="btn btn-success btn-sm stockUsage" href="#" id="<?= $item['item_id']; ?>"><i class="fa fa-minus">&nbsp;Usage</i></a>
                           <a class="btn btn-primary btn-sm editStock" href="#" id="<?= $item['item_id']; ?>"><i class="fa fa-edit">&nbsp;Edit</i></a>
-                          <a class="btn btn-danger btn-sm deleteStock" href="#" id="<?= $item['item_id']; ?>" data-id="<?php echo $item['item_id']; ?>"><i class="fa fa-times">&nbsp;Delete</i></a>
+<!--                          <a class="btn btn-danger btn-sm deleteStock" href="#" id="--><?//= $item['item_id']; ?><!--" data-id="--><?php //echo $item['item_id']; ?><!--"><i class="fa fa-times">&nbsp;Delete</i></a>-->
                         </div>
                      </td>
                   </tr>
@@ -1026,4 +1027,14 @@
 <script src="../../dist/js/stock-usage.js"></script>
 <script src="../../dist/js/update-stock-usage.js"></script>
 </body>
-</html>                                                                                                            
+</html>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#stockTable').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

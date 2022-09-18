@@ -92,6 +92,7 @@
   <link rel="stylesheet" href="../../dist/css/adminlte.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -570,7 +571,7 @@
             <div class="card-body">
             <div class="table-responsive">
                 <!-- table start -->
-               <table class="table table-striped table-bordered">
+               <table class="table table-striped table-bordered" id="pending_tranfer">
                 <thead>
                   <tr>
                     <th>Item Code</th>
@@ -696,3 +697,13 @@
 <script src="../../dist/js/adminlte.js"></script>
 </body>
 </html>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#pending_tranfer').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

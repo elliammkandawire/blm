@@ -82,6 +82,29 @@
           $pages = ceil($total / $limit);
           $previous = $page - 1;
           $next = $page + 1;
+      }else if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end']  ;
+          $result = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN team 
+                                    ON item.team_code = team.team_code
+									AND item.team_code=$teamCode WHERE date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+
+          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+//          echo var_dump($items);
+//          echo var_dump($start);
+//          echo var_dump($end);
+//          echo var_dump($teamCode);
+//          exit;
+
+          $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
+          $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+          $total = $itemCount[0]['id'];
+          $pages = ceil($total / $limit);
+          $previous = $page - 1;
+          $next = $page + 1;
       }
       else
       {
@@ -643,7 +666,7 @@
             <div class="card-body">
 			 <div id="print">
 			   <div class="row">
-                 <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">  
+                 <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-6 col-sm-12">
                    Showing results of
                     <span style="color: #008000;">
                         <?php  if(isset($keywords)){ 
@@ -653,7 +676,19 @@
                         } ?>
                     </span>
                  </span>
+                   <div style="font-weight: bold; margin-bottom: 15px;" class="col-md-6 col-sm-6">
+                       <form action="#" method="post">
+                           <span>Start Date:</span>
+                           <input type="date" name="start">
+
+                           <span>End Date:</span>
+                           <input type="date" name="end">
+
+                           <button class="btn btn-primary btn-sm">Search</button>
+                       </form>
+                   </div>
               </div>
+
 			
             <div class="table-responsive" >
                 <!-- table start -->

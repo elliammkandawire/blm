@@ -94,6 +94,7 @@
   <link rel="stylesheet" href="../../dist/css/adminlte.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -698,3 +699,14 @@
 
 </body>
 </html>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#stockTable').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

@@ -62,7 +62,7 @@
           ON item.team_code = team.team_code
           WHERE team.team_code =  $teamCode
           AND item.item_code LIKE '$keywords%'
-          OR item.item_name LIKE '$keywords%'
+          OR item.item_name LIKE '$keywords%' AND expiry_date >= NOW() 
           ORDER BY item.date_received DESC LIMIT $start, $limit");
           $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -79,7 +79,7 @@
                                     FROM item
                                     JOIN team 
                                     ON item.team_code = team.team_code
-                                    WHERE team.team_code =  $teamCode
+                                    WHERE team.team_code =  $teamCode AND expiry_date >= NOW() 
                                     ORDER BY item.date_received DESC LIMIT $start, $limit");
          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -125,6 +125,7 @@
   <link rel="stylesheet" href="../../dist/css/adminlte.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -615,7 +616,7 @@
             <div class="table-responsive">
                 <!-- table start -->
                
-               <table class="table table-striped table-advance table-bordered">
+               <table id="stock_transfer" class="table table-striped table-advance table-bordered">
                 <thead class="text-nowrap">
                   <tr>
                     <th>Item Code</th>
@@ -759,3 +760,13 @@
 <script src="../../dist/js/adminlte.js"></script>
 </body>
 </html>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#stock_transfer').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>
