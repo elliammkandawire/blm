@@ -728,9 +728,10 @@
 		     <div class="row">
 		      <div class="col-sm-6">
 			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-details-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Details</a>
-			    </form>
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-details-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Details</a>-->
+<!--			    -->
+                </form>
 			  </div>
 			 </div>
 			
@@ -862,15 +863,50 @@
 <!---Stock Take table -->
 <script src="../../dist/js/stock-take-modal.js"></script>
 <script src="../../dist/js/update-stock-take.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>-->
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $('#stockTable').DataTable({-->
+<!--            "paging":   false,-->
+<!--            "ordering": false,-->
+<!--            "info":     false-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
         $('#stockTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
             "paging":   false,
             "ordering": false,
             "info":     false
         });
     });
 </script>
-</body>
-</html>

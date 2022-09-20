@@ -709,15 +709,50 @@
 <script src="../../dist/js/edit-stock.js"></script>
 <!---Updates Stock in Item table-->
 <script src="../../dist/js/update-stock.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>-->
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $('#stockTable').DataTable({-->
+<!--            "paging":   false,-->
+<!--            "ordering": false,-->
+<!--            "info":     false-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
         $('#stockTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
             "paging":   false,
             "ordering": false,
             "info":     false
         });
     });
 </script>
-</body>
-</html>

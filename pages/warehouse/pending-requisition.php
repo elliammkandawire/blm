@@ -690,15 +690,41 @@
 <script src="../../plugins/select2/js/select2.full.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+</body>
+</html>
+
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
         $('#pending_table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
             "paging":   false,
             "ordering": false,
             "info":     false
         });
     });
 </script>
-</body>
-</html>

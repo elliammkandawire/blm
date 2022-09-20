@@ -601,3 +601,38 @@
 <script src="../../dist/js/adminlte.js"></script>
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#orderDetails').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

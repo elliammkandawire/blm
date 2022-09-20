@@ -547,7 +547,7 @@
                     <td  class="text-nowrap">
                        <div class="btn-group">
                           <a class="btn btn-primary btn-sm" href="purchase-details.php?order_detail_id=<?= $order['order_detail_id']; ?>"><i class="fa fa-file-invoice">&nbsp;Order details</i></a>
-                          <a class="btn btn-danger btn-sm deleteOrder" href="#" id="<?=$order['order_detail_id']; ?>" data-id="<?php echo $order['order_detail_id']; ?>"><i class="fa fa-times">&nbsp;Delete</i></a>
+<!--                          F-->
                        </div>
                     </td>
                   </tr>
@@ -602,8 +602,9 @@
 			<div class="row no-print">
 		      <div class="col-sm-6">
 			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="order-summary-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print order Details</a>
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="order-summary-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print order Details</a>-->
+<!--			   -->
 			    </form>
 			  </div>
 			</div>
@@ -655,3 +656,38 @@
 <script src="../../dist/js/invoice.js"></script>
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#orderDetails').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

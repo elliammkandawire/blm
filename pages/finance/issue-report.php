@@ -518,8 +518,9 @@
 		    <div class="row">
 		      <div class="col-sm-6">
 			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-usage-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Usage</a>
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-usage-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Usage</a>-->
+<!--			   -->
 			    </form>
 			  </div>
 			 </div>
@@ -564,3 +565,38 @@
 
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#stockTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

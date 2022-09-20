@@ -72,6 +72,29 @@
           $pages = ceil($total / $limit);
           $previous = $page - 1;
           $next = $page + 1;
+      }else if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end']  ;
+          $result = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN team 
+                                    ON item.team_code = team.team_code
+									AND item.team_code=$teamCode WHERE date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+
+          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+//          echo var_dump($items);
+//          echo var_dump($start);
+//          echo var_dump($end);
+//          echo var_dump($teamCode);
+//          exit;
+
+          $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
+          $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+          $total = $itemCount[0]['id'];
+          $pages = ceil($total / $limit);
+          $previous = $page - 1;
+          $next = $page + 1;
       }
       else
       {
@@ -148,7 +171,7 @@
   <link rel="stylesheet" href="../../dist/css/adminlte.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -630,6 +653,17 @@
                         } ?>
                     </span>
                  </span>
+                   <div style="font-weight: bold; margin-bottom: 15px;" class="col-md-6 col-sm-6">
+                       <form action="#" method="post">
+                           <span>Start Date:</span>
+                           <input type="date" name="start">
+
+                           <span>End Date:</span>
+                           <input type="date" name="end">
+
+                           <button class="btn btn-primary btn-sm">Search</button>
+                       </form>
+                   </div>
               </div>
             <div class="table-responsive">
                 <!-- table start -->
@@ -743,7 +777,7 @@
 		     <div class="row">
 		      <div class="col-sm-6">
 			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
 			    </form>
 			  </div>
 			 </div>
@@ -1026,12 +1060,38 @@
 <!---Stock Usage -->
 <script src="../../dist/js/stock-usage.js"></script>
 <script src="../../dist/js/update-stock-usage.js"></script>
+
 </body>
 </html>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
         $('#stockTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
             "paging":   false,
             "ordering": false,
             "info":     false

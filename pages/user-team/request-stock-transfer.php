@@ -48,6 +48,8 @@
 	  $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
       $getTeamCode = mysqli_fetch_array($result, MYSQLI_ASSOC);
       $teamCode = $getTeamCode['team_code'];
+      $teamCodeName = mysqli_fetch_row(mysqli_query($connection, "SELECT * FROM team WHERE team_code=$teamCode"));
+      $all_team = mysqli_query($connection, "SELECT * FROM team");
 
       if(isset($_GET['item_id']))
       {
@@ -637,12 +639,16 @@
                   
                 <div class="form-row">
                   <div class="col-md-6 form-group">
-                    <label for="source">Transfer From</label>
+                    <label for="source">Transfer From(<?php echo ($teamCodeName[2]);  ?>)</label>
                     <input type="number" name="source" value="<?php echo $teamCode; ?>" class="form-control disabled" id="source"  disabled />
                   </div>
                   <div class="col-md-6 form-group">
                     <label for="destination">Transfer To</label>
-                    <input type="number" name="destination" class="form-control" id="destination" data-rule-required="true" data-msg-required="Please specify the destination/team code" />
+                      <select class="form-control" id="destination" name="destination" data-msg-required="Please specify the destination/team code">
+                          <?php foreach ($all_team as $team): ?>
+                              <option value="<?php echo $team["team_code"] ?>"><?php echo $team["name"]; ?></option>
+                          <?php endforeach; ?>
+                      </select>
                   </div>
                 </div>
 

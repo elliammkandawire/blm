@@ -583,7 +583,7 @@
                      <td>
 					    <div class="btn-group">
                                <a class="btn btn-primary btn-sm" href="download-file.php?file_id=<?= $upload['file_id']; ?>"><i class="fa fa-download">&nbsp;Download</i></a>
-							  <a class="btn btn-danger btn-sm deleteUploads" href="#" id="<?= $upload['file_id']; ?>"><i class="fa fa-times">&nbsp;Delete</i></a>
+<!--							  <a class="btn btn-danger btn-sm deleteUploads" href="#" id="--><?//= $upload['file_id']; ?><!--"><i class="fa fa-times">&nbsp;Delete</i></a>-->
 					    </div>
 					</td>
                   </tr>

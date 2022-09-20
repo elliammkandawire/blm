@@ -567,7 +567,7 @@
             <div class="card-body">
               <div class="table-responsive">
                 <!-- table start -->
-               <table class="table table-striped table-advance table-hover table-bordered">
+               <table id="table" class="table table-striped table-advance table-hover table-bordered">
                 <thead class="text-nowrap">
                   <tr>
                     <th>ID</th>
@@ -688,3 +688,38 @@
 
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

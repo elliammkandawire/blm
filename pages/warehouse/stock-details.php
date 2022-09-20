@@ -666,7 +666,7 @@
             <div class="card-body">
 			 <div id="print">
 			   <div class="row">
-                 <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-6 col-sm-12">
+                 <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">
                    Showing results of
                     <span style="color: #008000;">
                         <?php  if(isset($keywords)){ 
@@ -802,9 +802,10 @@
 		     <div class="row no-print">
 		      <div class="col-sm-6">
 			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-details-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Details</a>
-			    </form>
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-details-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Details</a>-->
+<!--			    -->
+                </form>
 			  </div>
 			 </div>
 			 <!-- /. Modal -->
@@ -1082,12 +1083,47 @@
 <!---Stock Usage -->
 <script src="../../dist/js/stock-usage.js"></script>
 <script src="../../dist/js/update-stock-usage.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>-->
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $("#stockUsageForm").validate();-->
+<!--        $('#stockTable').DataTable({responsive: true});-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
-        $("#stockUsageForm").validate();
-        $('#stockTable').DataTable({responsive: true});
+        $('#stockTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            // "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
     });
 </script>
-</body>
-</html>                                                                                                            
