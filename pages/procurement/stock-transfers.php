@@ -50,6 +50,15 @@
                                     FROM transfer
 									WHERE source=$teamCode OR destination=$teamCode
                                     ORDER BY date_requested DESC LIMIT $start, $limit");
+
+     if(isset($_POST['start']) && isset($_POST['end'])){
+       $start=$_POST['start'];
+       $end=$_POST['end'];
+       $result = mysqli_query($connection, "SELECT *  
+                                    FROM transfer
+									WHERE date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+     }
       $items = $result->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(transfer_id) AS id FROM transfer WHERE source=$teamCode OR destination=$teamCode");
@@ -503,7 +512,8 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
-            <div class="table-responsive">
+                <?php include '../includes/file.php';?>
+            <div class="table-responsive" id="table">
                 <!-- table start -->
                <table class="table table-striped table-bordered">
                 <thead class="text-nowrap">
@@ -616,6 +626,40 @@
 <!---Show date/tine on dashboard-->
 <script src="../../dist/js/datetime.js"></script>
 <!---Generates random numbers-->
-<script src="../../dist/js/random_numbers.js"></script>
+<!--<script src="../../dist/js/random_numbers.js"></script>-->
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });

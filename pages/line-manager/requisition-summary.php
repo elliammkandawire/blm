@@ -39,6 +39,15 @@
         $start = ($page -1) * $limit;
         $results = $connection->query("SELECT * FROM requisition
                                      ORDER BY date_requested DESC LIMIT $start, $limit");
+
+        if(isset($_POST['start']) && isset($_POST['end'])){
+         $start=$_POST['start'];
+         $end=$_POST['end'];
+         $results = mysqli_query($connection, "SELECT *  
+                                    FROM requisition
+									WHERE date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+        }
         $requisitions = $results->fetch_all(MYSQLI_ASSOC);
 
         $result1 = $connection->query("SELECT COUNT(requisition_id) AS id FROM requisition");
@@ -467,6 +476,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table class="table table-striped table-advance table-hover table-bordered" id="summary">

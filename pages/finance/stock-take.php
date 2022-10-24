@@ -50,6 +50,18 @@
                                     JOIN stock_take
                                     ON item.item_id=stock_take.item_id
 									ORDER BY item.date_received DESC");
+
+
+      if(isset($_POST['start']) && isset($_POST['end'])){
+         $start=$_POST['start'];
+         $end=$_POST['end'];
+         $results = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN stock_take
+                                    ON item.item_id=stock_take.item_id
+									WHERE item.date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+       }
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(item.item_id) AS id
@@ -429,6 +441,20 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <div class="row">
+               <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">
+                  Showing results of
+                  <span style="color: #008000;">
+                        <?php  if(isset($keywords)){
+                            echo $keywords;
+                        }else{
+                            echo'all items in stock';
+                        } ?>
+                </span>
+
+              </span>
+                    <?php include '../includes/file.php';?>
+                </div>
 			<div id="alert-message"></div>
             <div class="table-responsive">
                 <!-- table start -->
@@ -539,14 +565,14 @@
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
-		   <div class="row">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-take-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Details</a>
-			    </form>
-			  </div>
-			 </div>
+<!--		   <div class="row">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-take-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Details</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			 </div>-->
 			 <br>
         </div>
 		

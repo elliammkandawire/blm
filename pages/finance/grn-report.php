@@ -62,6 +62,16 @@
           $pages = ceil($total / $limit);
           $previous = $page - 1;
           $next = $page + 1;
+      }else  if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end'];
+          $results = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN team 
+                                    ON item.team_code = team.team_code
+									WHERE item.date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+          $items = mysqli_fetch_all($results, MYSQLI_ASSOC);
       }
       else
       {
@@ -72,14 +82,15 @@
                                     ORDER BY item.date_received DESC LIMIT $start, $limit");
          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-         $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
-         $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
-         $total = $itemCount[0]['id'];
-         $pages = ceil($total / $limit);
-         $previous = $page - 1;
-         $next = $page + 1;
+
         
       }
+      $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
+      $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+      $total = $itemCount[0]['id'];
+      $pages = ceil($total / $limit);
+      $previous = $page - 1;
+      $next = $page + 1;
       if(mysqli_num_rows($result) >0)
       { 
         $flag = TRUE; 
@@ -453,7 +464,8 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
-			   <div class="row">
+                <?php include '../includes/file.php';?>
+                <div class="row">
                  <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">  
                    Showing results of
                     <span style="color: #008000;">

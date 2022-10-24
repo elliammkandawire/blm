@@ -48,6 +48,15 @@
       $result = $connection->query("SELECT *  
                                     FROM transfer
                                     ORDER BY date_requested DESC LIMIT $start, $limit");
+
+      if(isset($_POST['start']) && isset($_POST['end'])){
+       $start=$_POST['start'];
+       $end=$_POST['end'];
+       $result = mysqli_query($connection, "SELECT *  
+                                    FROM transfer
+									WHERE date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+      }
       $items = $result->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(transfer_id) AS id FROM transfer");
@@ -489,6 +498,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table class="table table-striped table-bordered" id="stockTable">

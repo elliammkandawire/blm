@@ -70,6 +70,17 @@
           $previous = $page - 1;
           $next = $page + 1;
       }
+      else if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end'];
+          $result = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN team 
+                                    ON item.team_code = team.team_code
+									AND item.team_code=$teamCode where  expiry_date >= NOW()  AND date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received");
+          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+      }
       else
       {
          $result = mysqli_query($connection, "SELECT *  
@@ -79,14 +90,15 @@
 									AND item.team_code=$teamCode where  expiry_date >= NOW() 
                                     ORDER BY item.date_received  DESC LIMIT $start, $limit");
          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+      }
 
-         $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
-         $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
-         $total = $itemCount[0]['id'];
-         $pages = ceil($total / $limit);
-         $previous = $page - 1;
-         $next = $page + 1;
-      } 
+     $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
+     $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+     $total = $itemCount[0]['id'];
+     $pages = ceil($total / $limit);
+     $previous = $page - 1;
+     $next = $page + 1;
+
       
       if(mysqli_num_rows($result) >0)
       { 
@@ -610,7 +622,9 @@
                                     echo'all items in stock'; 
                         } ?>
                 </span>
+
               </span>
+                <?php include '../includes/file.php';?>
             </div>
             <div class="table-responsive">
                 <!-- table start -->
@@ -762,9 +776,35 @@
 <!---Generates random numbers-->
 <script src="../../dist/js/random_numbers.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
         $('#stock_transfer').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
             "paging":   false,
             "ordering": false,
             "info":     false

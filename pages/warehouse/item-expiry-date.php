@@ -609,7 +609,7 @@
             <div class="card-body">
             <div class="table-responsive">
                 <!-- table start -->
-               <table class="table table-striped table-advance table-bordered">
+               <table id="expiryDetails" class="table table-striped table-advance table-bordered">
                 <thead class="text-nowrap">
                   <tr>
                     <th>Item Code</th>
@@ -758,3 +758,38 @@
 <script src="../../dist/js/random_numbers.js"></script>
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#expiryDetails').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

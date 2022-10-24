@@ -50,6 +50,17 @@
                                     JOIN stock_usage 
                                     ON item.item_id = stock_usage.item_id
                                     ORDER BY stock_usage.date_taken DESC LIMIT $start, $limit");
+
+      if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end'];
+          $results = $connection->query("SELECT *  
+                                    FROM item
+                                    JOIN stock_usage 
+                                    ON item.item_id = stock_usage.item_id
+									WHERE stock_usage.date_taken BETWEEN '$start' AND '$end'
+                                    ORDER BY stock_usage.date_taken DESC");
+      }
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(stock_usage_id) AS id FROM stock_usage
@@ -426,6 +437,19 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
+                <div class="row">
+                 <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">
+                   Showing results of
+                    <span style="color: #008000;">
+                        <?php  if(isset($keywords)){
+                            echo $keywords;
+                        }else{
+                            echo'grn details';
+                        } ?>
+                    </span>
+                 </span>
+                </div>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="stockTable" class="table table-striped table-advance table-bordered">

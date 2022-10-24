@@ -48,6 +48,15 @@
         $result = $connection->query("SELECT *  
                                     FROM transfer
                                     ORDER BY date_requested DESC LIMIT $start, $limit");
+
+        if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end'];
+          $result = mysqli_query($connection, "SELECT *  
+                                    FROM transfer
+									WHERE date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+        }
         $items = $result->fetch_all(MYSQLI_ASSOC);
 
         $result1 = $connection->query("SELECT COUNT(transfer_id) AS id FROM transfer");
@@ -399,6 +408,20 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <div class="row">
+               <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">
+                  Showing results of
+                  <span style="color: #008000;">
+                        <?php  if(isset($keywords)){
+                            echo $keywords;
+                        }else{
+                            echo'all items in stock';
+                        } ?>
+                </span>
+
+              </span>
+                    <?php include '../includes/file.php';?>
+                </div>
             <div class="table-responsive">
                 <!-- table start -->
                <table class="table table-striped table-bordered" id="stock_movement">

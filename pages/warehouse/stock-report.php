@@ -72,6 +72,18 @@
           $previous = $page - 1;
           $next = $page + 1;
       }
+      else if(isset($_POST['start']) && isset($_POST['end'])){
+         $start=$_POST['start'];
+         $end=$_POST['end'];
+         $result = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN stock_take 
+                                    ON item.item_id = stock_take.item_id
+									WHERE item.team_code=$teamCode
+									AND item.date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+      }
       else
       {
          $result = mysqli_query($connection, "SELECT *  
@@ -81,15 +93,13 @@
 									WHERE item.team_code=$teamCode
                                     ORDER BY item.date_received DESC LIMIT $start, $limit");
          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-         $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
-         $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
-         $total = $itemCount[0]['id'];
-         $pages = ceil($total / $limit);
-         $previous = $page - 1;
-         $next = $page + 1;
-        
       }
+     $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
+     $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+     $total = $itemCount[0]['id'];
+     $pages = ceil($total / $limit);
+     $previous = $page - 1;
+     $next = $page + 1;
       if(mysqli_num_rows($result) >0)
       { 
         $flag = TRUE; 
@@ -594,6 +604,9 @@
                   
             <!-- /.card-body -->
             <div class="card-body">
+                <div class="row">
+                    <?php include '../includes/file.php';?>
+                </div>
 			 <div id="print">
 			   <div class="row">
                  <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">  
@@ -733,14 +746,14 @@
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
-		     <div class="row no-print">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-details-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock report</a>
-			    </form>
-			  </div>
-			 </div>
+<!--		     <div class="row no-print">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-details-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock report</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			 </div>-->
 			 
 			<br>
 		    
@@ -797,4 +810,39 @@
 <script src="../../dist/js/stock-usage.js"></script>
 <script src="../../dist/js/update-stock-usage.js"></script>
 </body>
-</html>                                                                                                            
+</html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#stockTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

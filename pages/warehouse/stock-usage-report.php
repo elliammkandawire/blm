@@ -57,6 +57,16 @@
                                     ON item.item_id = stock_usage.item_id
 									WHERE item.team_code=$teamCode
                                     ORDER BY stock_usage.date_taken DESC LIMIT $start, $limit");
+    if(isset($_POST['start']) && isset($_POST['end'])){
+       $start=$_POST['start'];
+       $end=$_POST['end'];
+       $results = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN stock_usage 
+                                    ON item.item_id = stock_usage.item_id
+                                    where item.team_code=$teamCode AND stock_usage.date_taken BETWEEN '$start' AND '$end'
+                                    ORDER BY stock_usage.date_taken DESC");
+     }
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(stock_usage_id) AS id FROM stock_usage
@@ -603,6 +613,20 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <div id="print">
+                    <div class="row">
+                 <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">
+                   Showing results of
+                    <span style="color: #008000;">
+                        <?php  if(isset($keywords)){
+                            echo $keywords;
+                        }else{
+                            echo'all items in stock';
+                        } ?>
+                    </span>
+                 </span>
+                        <?php include '../includes/file.php';?>
+                    </div>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="stockUsageTable" class="table table-striped table-advance table-bordered">
@@ -693,14 +717,14 @@
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
-		     <div class="row">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-usage-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Usage</a>
-			    </form>
-			  </div>
-			 </div>
+<!--		     <div class="row">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-usage-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Usage</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			 </div>-->
 			 <br>
         </div>
         <!-- /.row (main row) -->
@@ -742,3 +766,39 @@
 <script src="../../dist/js/delete-stock.js"></script>
 </body>
 </html>
+
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#stockUsageTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>

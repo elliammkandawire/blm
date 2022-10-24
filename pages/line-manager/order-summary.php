@@ -40,6 +40,14 @@
         $results = $connection->query("SELECT *  
                                       FROM orderDetails 
                                       ORDER BY order_date DESC LIMIT $start, $limit");
+       if(isset($_POST['start']) && isset($_POST['end'])){
+        $start=$_POST['start'];
+        $end=$_POST['end'];
+        $results = mysqli_query($connection, "SELECT *  
+                                    FROM orderDetails
+									WHERE order_date BETWEEN '$start' AND '$end'
+                                    ORDER BY order_date DESC");
+        }
         $orders = $results->fetch_all(MYSQLI_ASSOC);
   
         $result1 = $connection->query("SELECT COUNT(order_detail_id) AS id FROM orderDetails");
@@ -468,6 +476,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="orderDetails" class="table table-striped table-advance table-bordered">
@@ -599,6 +608,7 @@
 <!--        });-->
 <!--    });-->
 <!--</script>-->
+<?php include '../includes/includes_footer.php';?>
 <script>
     $(document).ready(function() {
         $('#orderDetails').DataTable({

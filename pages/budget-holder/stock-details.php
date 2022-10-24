@@ -42,6 +42,16 @@
                                     JOIN team 
                                     ON item.team_code = team.team_code
                                     ORDER BY item.date_received DESC LIMIT $start, $limit");
+     if(isset($_POST['start']) && isset($_POST['end'])){
+        $start=$_POST['start'];
+        $end=$_POST['end'];
+        $results = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN team 
+                                    ON item.team_code = team.team_code
+									WHERE item.date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+      }
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(item_id) AS id FROM item");
@@ -482,6 +492,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="stockTable" class="table table-striped table-advance table-bordered">

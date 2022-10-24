@@ -53,6 +53,14 @@
       $result = $connection->query("SELECT *  
                                     FROM transfer
                                     ORDER BY date_requested DESC LIMIT $start, $limit");
+      if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end'];
+          $result = mysqli_query($connection, "SELECT *  
+                                    FROM transfer
+									WHERE date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+      }
       $items = $result->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(transfer_id) AS id FROM transfer");
@@ -585,9 +593,23 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <div class="row">
+               <span style="font-weight: bold; margin-bottom: 15px;" class="col-md-12 col-sm-12">
+                  Showing results of
+                  <span style="color: #008000;">
+                        <?php  if(isset($keywords)){
+                            echo $keywords;
+                        }else{
+                            echo'all items in stock';
+                        } ?>
+                </span>
+
+              </span>
+                    <?php include '../includes/file.php';?>
+                </div>
             <div class="table-responsive">
                 <!-- table start -->
-               <table class="table table-striped table-bordered">
+               <table id="stockTranfer" class="table table-striped table-bordered">
                 <thead class="text-nowrap">
                   <tr>
                     <th>Item Code</th>
@@ -656,14 +678,14 @@
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
-		    <div class="row no-print">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-transfer-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Transfers</a>
-			    </form>
-			  </div>
-			</div>
+<!--		    <div class="row no-print">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-transfer-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Transfers</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			</div>-->
 			<br>
         </div>
         <!-- /.row (main row) -->
@@ -700,3 +722,38 @@
 <script src="../../dist/js/datetime.js"></script>
 </body>
 </html>
+<?php include '../includes/includes_footer.php';?>
+<script>
+    $(document).ready(function() {
+        $('#stockTranfer').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },  {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: 'th:not(:last-child)'
+                    }
+                },
+                'colvis'
+            ],
+            "paging":   false,
+            "ordering": false,
+            "info":     false
+        });
+    });
+</script>
