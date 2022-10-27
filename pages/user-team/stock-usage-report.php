@@ -58,6 +58,16 @@
                                     ON item.item_id = stock_usage.item_id
 									WHERE item.team_code=$teamCode
                                     ORDER BY stock_usage.date_taken DESC LIMIT $start, $limit");
+if(isset($_POST['start']) && isset($_POST['end'])){
+    $start=$_POST['start'];
+    $end=$_POST['end'];
+    $results = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN stock_usage 
+                                    ON item.item_id = stock_usage.item_id
+                                    where item.team_code=$teamCode AND stock_usage.date_taken BETWEEN '$start' AND '$end'
+                                    ORDER BY stock_usage.date_taken DESC");
+}
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(stock_usage_id) AS id FROM stock_usage
@@ -531,12 +541,12 @@
                 </a>
               </li>
 			  
-			  <li class="nav-item">
-                <a href="stock-valuation-report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Stock Valuation</p>
-                </a>
-              </li>
+<!--			  <li class="nav-item">-->
+<!--                <a href="stock-valuation-report.php" class="nav-link">-->
+<!--                  <i class="far fa-circle nav-icon"></i>-->
+<!--                  <p>Stock Valuation</p>-->
+<!--                </a>-->
+<!--              </li>-->
 			  
               <li class="nav-item">
                 <a href="stock-report.php" class="nav-link">
@@ -601,6 +611,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="stockUsageTable" class="table table-striped table-advance table-bordered">
@@ -690,14 +701,14 @@
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
-		    <div class="row">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-usage-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Usage</a>
-			    </form>
-			  </div>
-			 </div>
+<!--		    <div class="row">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-usage-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Usage</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			 </div>-->
 			 <br>
         </div>
         <!-- /.row (main row) -->

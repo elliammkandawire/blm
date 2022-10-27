@@ -57,6 +57,18 @@
                                     WHERE item.expiry_date < DATE_ADD(NOW(), INTERVAL 90 DAY)
 									AND item.team_code=$teamCode
                                     ORDER BY item.expiry_date ASC LIMIT $start, $limit");
+if(isset($_POST['start']) && isset($_POST['end'])){
+    $start=$_POST['start'];
+    $end=$_POST['end'];
+
+    $results = $connection->query("SELECT *  
+                                    FROM item
+                                    JOIN team 
+                                    ON item.team_code = team.team_code
+                                    WHERE item.expiry_date < DATE_ADD(NOW(), INTERVAL 90 DAY) AND item.expiry_date BETWEEN '$start' AND '$end'
+                                    AND team.team_code =  $teamCode
+                                    ORDER BY item.expiry_date ASC");
+}
       $items = $results->fetch_all(MYSQLI_ASSOC);
 	  $query = "SELECT *  
                 FROM item
@@ -607,6 +619,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="expiryDetails" class="table table-striped table-advance table-bordered">

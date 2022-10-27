@@ -57,6 +57,14 @@
                                     WHERE source = $teamCode
                                     OR destination = $teamCode
                                     ORDER BY date_requested DESC LIMIT $start, $limit");
+if(isset($_POST['start']) && isset($_POST['end'])){
+    $start=$_POST['start'];
+    $end=$_POST['end'];
+    $result = mysqli_query($connection, "SELECT *  
+                                    FROM transfer 
+									WHERE (source = $teamCode OR destination = $teamCode) AND date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+}
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(transfer_id) AS id FROM transfer WHERE source = $teamCode OR destination = $teamCode");
@@ -516,12 +524,12 @@
                 </a>
               </li>
 			  
-			  <li class="nav-item">
-                <a href="stock-valuation-report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Stock Valuation</p>
-                </a>
-              </li>
+<!--			  <li class="nav-item">-->
+<!--                <a href="stock-valuation-report.php" class="nav-link">-->
+<!--                  <i class="far fa-circle nav-icon"></i>-->
+<!--                  <p>Stock Valuation</p>-->
+<!--                </a>-->
+<!--              </li>-->
 			  
               <li class="nav-item">
                 <a href="stock-report.php" class="nav-link">
@@ -588,6 +596,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="table" class="table table-striped table-bordered">
@@ -659,14 +668,14 @@
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
-		    <div class="row no-print">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-transfer-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Transfers</a>
-			    </form>
-			  </div>
-			</div>
+<!--		    <div class="row no-print">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-transfer-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock Transfers</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			</div>-->
 			<br>
         </div>
         <!-- /.row (main row) -->

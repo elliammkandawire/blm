@@ -57,6 +57,14 @@
                                     WHERE source = $teamCode
                                     OR destination = $teamCode
                                     ORDER BY date_requested DESC LIMIT $start, $limit");
+   if(isset($_POST['start']) && isset($_POST['end'])){
+      $start=$_POST['start'];
+      $end=$_POST['end'];
+      $result = mysqli_query($connection, "SELECT *  
+                                    FROM transfer
+                                    where (source = $teamCode OR destination = $teamCode) AND date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+      }
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(transfer_id) AS id FROM transfer WHERE source = $teamCode OR destination = $teamCode");
@@ -569,6 +577,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table class="table table-striped table-bordered" id="pending_tranfer">

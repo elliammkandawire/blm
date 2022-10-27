@@ -58,6 +58,17 @@
                                     ON item.item_id = stock_usage.item_id
 									WHERE item.team_code=$teamCode
                                     ORDER BY stock_usage.date_taken DESC LIMIT $start, $limit");
+
+if(isset($_POST['start']) && isset($_POST['end'])){
+    $start=$_POST['start'];
+    $end=$_POST['end']  ;
+    $results = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN stock_usage 
+                                    ON item.item_id = stock_usage.item_id
+									WHERE item.team_code=$teamCode AND date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY stock_usage.date_taken DESC");
+}
       $items = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(stock_usage_id) AS id FROM stock_usage
@@ -571,6 +582,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="stockTable" class="table table-striped table-advance table-bordered">

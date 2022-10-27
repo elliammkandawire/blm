@@ -515,12 +515,12 @@
                 </a>
               </li>
 			  
-			  <li class="nav-item">
-                <a href="stock-valuation-report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Stock Valuation</p>
-                </a>
-              </li>
+<!--			  <li class="nav-item">-->
+<!--                <a href="stock-valuation-report.php" class="nav-link">-->
+<!--                  <i class="far fa-circle nav-icon"></i>-->
+<!--                  <p>Stock Valuation</p>-->
+<!--                </a>-->
+<!--              </li>-->
 			  
               <li class="nav-item">
                 <a href="stock-report.php" class="nav-link">

@@ -54,6 +54,14 @@
       $page = isset($_GET['page']) ? $_GET['page'] : 1;
       $start = ($page -1) * $limit;
       $results = $connection->query("SELECT * FROM requisition WHERE team_code=$teamCode ORDER BY date_requested DESC LIMIT $start, $limit");
+     if(isset($_POST['start']) && isset($_POST['end'])){
+        $start=$_POST['start'];
+        $end=$_POST['end'];
+        $results = mysqli_query($connection, "SELECT *  
+                                    FROM requisition
+									WHERE team_code=$teamCode and date_requested BETWEEN '$start' AND '$end'
+                                    ORDER BY date_requested DESC");
+       }
       $requisitions = $results->fetch_all(MYSQLI_ASSOC);
 
       $result1 = $connection->query("SELECT COUNT(requisition_id) AS id FROM requisition WHERE team_code=$teamCode");
@@ -490,12 +498,12 @@
                 </a>
               </li>
 			  
-			  <li class="nav-item">
-                <a href="stock-valuation-report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Stock Valuation</p>
-                </a>
-              </li>
+<!--			  <li class="nav-item">-->
+<!--                <a href="stock-valuation-report.php" class="nav-link">-->
+<!--                  <i class="far fa-circle nav-icon"></i>-->
+<!--                  <p>Stock Valuation</p>-->
+<!--                </a>-->
+<!--              </li>-->
 			  
               <li class="nav-item">
                 <a href="stock-report.php" class="nav-link">
@@ -562,6 +570,7 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
+                <?php include '../includes/file.php';?>
               <div class="table-responsive">
                 <!-- table start -->
                 <table id="table" class="table table-striped table-advance table-hover table-bordered">

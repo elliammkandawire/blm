@@ -72,6 +72,17 @@
           $pages = ceil($total / $limit);
           $previous = $page - 1;
           $next = $page + 1;
+      }else if(isset($_POST['start']) && isset($_POST['end'])){
+          $start=$_POST['start'];
+          $end=$_POST['end'];
+          $result = mysqli_query($connection, "SELECT *  
+                                    FROM item
+                                    JOIN stock_take 
+                                    ON item.item_id = stock_take.item_id
+									WHERE item.team_code=$teamCode
+									AND item.date_received BETWEEN '$start' AND '$end'
+                                    ORDER BY item.date_received DESC");
+          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
       }
       else
       {
@@ -83,14 +94,15 @@
                                     ORDER BY item.date_received DESC LIMIT $start, $limit");
          $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-         $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
-         $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
-         $total = $itemCount[0]['id'];
-         $pages = ceil($total / $limit);
-         $previous = $page - 1;
-         $next = $page + 1;
+
         
       }
+      $result1 = mysqli_query($connection, "SELECT COUNT(item_id) AS id FROM item WHERE team_code=$teamCode");
+      $itemCount = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+      $total = $itemCount[0]['id'];
+      $pages = ceil($total / $limit);
+      $previous = $page - 1;
+      $next = $page + 1;
       if(mysqli_num_rows($result) >0)
       { 
         $flag = TRUE; 
@@ -553,12 +565,12 @@
                 </a>
               </li>
 			  
-			  <li class="nav-item">
-                <a href="stock-valuation-report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Stock Valuation</p>
-                </a>
-              </li>
+<!--			  <li class="nav-item">-->
+<!--                <a href="stock-valuation-report.php" class="nav-link">-->
+<!--                  <i class="far fa-circle nav-icon"></i>-->
+<!--                  <p>Stock Valuation</p>-->
+<!--                </a>-->
+<!--              </li>-->
 			  
               <li class="nav-item">
                 <a href="stock-report.php" class="nav-link">
@@ -638,6 +650,7 @@
                     </span>
                  </span>
               </div>
+                <?php include '../includes/file.php';?>
             <div class="table-responsive">
                 <!-- table start -->
                <table id="stockTable" class="table table-striped table-bordered">
@@ -763,14 +776,14 @@
            </div>
 		   <!-- /.card -->
 		  
-		     <div class="row">
-		      <div class="col-sm-6">
-			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
-				  <a href="stock-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock report</a>
-			    </form>
-			  </div>
-			 </div>
+<!--		     <div class="row">-->
+<!--		      <div class="col-sm-6">-->
+<!--			    <form action="--><?php //echo $_SERVER["PHP_SELF"]; ?><!--" method="post">-->
+<!--				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>-->
+<!--				  <a href="stock-report-print.php" rel="noopener" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i>&nbsp;Print Stock report</a>-->
+<!--			    </form>-->
+<!--			  </div>-->
+<!--			 </div>-->
 			
         </div>
 		
