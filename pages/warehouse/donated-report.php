@@ -1,14 +1,9 @@
 <?php
      session_start();
-     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
      require_once('../connection/db-connection.php'); 
      include('../misc/functions.php');
-
-    $sess = array();
-    $add="";
-    $msg = array();
-     
-    if (!isset ($_SESSION['warehouse']))
+     $sess = array();
+    if (!isset ($_SESSION['finance']))
         {
         // User not logged in, redirected to login page
         Header("Location: ../../index.php");
@@ -22,54 +17,68 @@
 			     session_destroy();
 			     $sess[] = 'Your session has expired please login again';
 		    }
+	      $user_check = $_SESSION['finance']; // Stored Session for current logged user
 
-	    $user_check = $_SESSION['warehouse']; // Stored Session for current logged user
+        $ret = "SELECT id FROM user WHERE username = '$user_check'";
+        $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
+	      $getid = mysqli_fetch_array($result, MYSQLI_ASSOC);
+        $userid = $getid['id'];
 
-      $ret = "SELECT id FROM user WHERE username = '$user_check'";
-      $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
-	    $getid = mysqli_fetch_array($result, MYSQLI_ASSOC);
-      $userid = $getid['id'];
+        $ret = "SELECT firstname FROM user WHERE username = '$user_check'";
+	      $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
+        $getfirstname= mysqli_fetch_array($result, MYSQLI_ASSOC);
+        $firstname = $getfirstname['firstname'];
 
-      $ret = "SELECT firstname FROM user WHERE username = '$user_check'";
+        $ret = "SELECT surname FROM user WHERE username = '$user_check'";
 	    $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
-      $getfirstname= mysqli_fetch_array($result, MYSQLI_ASSOC);
-      $firstname = $getfirstname['firstname'];
+        $getsurname = mysqli_fetch_array($result, MYSQLI_ASSOC);
+        $surname = $getsurname['surname'];
+		
+		$ret = "SELECT user.team_code FROM user 
+                JOIN team 
+                ON team.team_code = user.team_code
+                WHERE user.username = '$user_check'";
+        $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
+        $getTeamCode = mysqli_fetch_array($result, MYSQLI_ASSOC);
+        $teamCode = $getTeamCode['team_code'];
+		
+	 
+	  $query = "SELECT * FROM item";
+      $resultset = mysqli_query($connection, $query) or die(mysqli_error($connection));
+      $stock_records = array();
+      while($rows = mysqli_fetch_assoc($resultset)) 
+	  {
+	     $stock_records[] = $rows;
+      }	
+      if(isset($_POST["export-stock"])) 
+	  {	
+	      $filename = "donated-report-".date('d-m-y'). ".xls";			
+	      header("Content-Type: application/vnd.ms-excel");
+	      header("Content-Disposition: attachment; filename=\"$filename\"");	
+	      $show_coloumn = false;
+	    if(!empty($stock_records)) 
+	    {
+	      foreach($stock_records as $record) 
+	      {
+		     if(!$show_coloumn)
+			 {
+		       // display field/column names in first row
+		       echo implode("\t", array_keys($record)) . "\n";
+		       $show_coloumn = true;
+		     }
+		     echo implode("\t", array_values($record)) . "\n";
+		  }
+	    }
+	    exit;  
+    }
 
-      $ret = "SELECT surname FROM user WHERE username = '$user_check'";
-	    $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
-      $getsurname = mysqli_fetch_array($result, MYSQLI_ASSOC);
-      $surname = $getsurname['surname'];
-
-      $ret = "SELECT user.team_code FROM user 
-              JOIN team 
-              ON team.team_code = user.team_code
-              WHERE user.username = '$user_check'";
-      $result=mysqli_query($connection, $ret)or die(mysqli_error($connection));
-      $getTeamCode = mysqli_fetch_array($result, MYSQLI_ASSOC);
-      $teamCode = $getTeamCode['team_code'];
-
-      $limit = 25;
-      $page = isset($_GET['page']) ? $_GET['page'] : 1;
-      $start = ($page -1) * $limit;
-      $results = $connection->query("SELECT * FROM requisition
-                                     WHERE requisition.status = 'Pending' 
-                                     AND team_code = $teamCode 
-                                     ORDER BY date_requested DESC LIMIT $start, $limit");
-      $requisitions = $results->fetch_all(MYSQLI_ASSOC);
-
-      $result1 = $connection->query("SELECT COUNT(requisition_id) AS id FROM requisition WHERE status = 'Pending'");
-      $requisitionsCount = $result1->fetch_all(MYSQLI_ASSOC);
-      $total = $requisitionsCount[0]['id'];
-      $pages = ceil($total / $limit);
-      $previous = $page - 1;
-      $next = $page + 1;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Banja | Warehouse | Pending Requisition</title>
+  <title>Banja | Finance | Donated Report</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -77,21 +86,13 @@
   <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Bootstrap Color Picker -->
-  <link rel="stylesheet" href="../../plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
   <!-- Tempusdominus Bootstrap 4 -->
   <link rel="stylesheet" href="../../plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-  <!-- iCheck -->
-  <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- Select2 -->
-  <link rel="stylesheet" href="../../plugins/select2/css/select2.min.css">
-  <link rel="stylesheet" href="../../plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
   <link rel="stylesheet" href="../../dist/css/adminlte.css">
-   <!-- overlayScrollbars -->
-   <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -101,9 +102,9 @@
   <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
   <span class="sr-only">Loading...</span>
   </div>
-
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    
+   <!-- Navbar -->
+   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -139,7 +140,7 @@
         <a title="Messages" class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-envelope"></i>
           <?php
-               $query = mysqli_query($connection, "SELECT * FROM requisition WHERE reply_status='Replied' AND view_status=0 AND team_code=$teamCode ORDER BY date_replied DESC LIMIT 4"); 
+               $query = mysqli_query($connection, "SELECT * FROM requisition WHERE status='Replied' AND view_status!=1 AND team_code=$teamCode ORDER BY date_replied DESC LIMIT 4"); 
                $count= mysqli_num_rows($query);
                
                if(mysqli_num_rows($query)>0){
@@ -158,7 +159,7 @@
                    while($result = mysqli_fetch_assoc($query))
                    {
                       $requisition_id = ''.$result['requisition_id'].'';
-                      $link = "view-replied-requisition.php?requisition_id=" . base64_encode(json_encode($requisition_id));
+                      $link = "#=" . base64_encode(json_encode($requisition_id));
                       
                       echo'<a href="'.$link.'" class="dropdown-item">';
                       echo'<!-- Message Start -->';
@@ -172,7 +173,7 @@
                       </a>
                        <div class="dropdown-divider"></div>';
                    }
-                    echo'<a href="replied-requisition.php" class="dropdown-item dropdown-footer">See All Requisitions</a>';
+                    echo'<a href="#" class="dropdown-item dropdown-footer">See All Requisitions</a>';
                 }
                 else{
                   echo'
@@ -190,13 +191,13 @@
       <!-- Notifications Dropdown Menu -->
        <li class="nav-item dropdown">
       <?php
-              $queryRequisitions = mysqli_query($connection, "SELECT * FROM requisition WHERE reply_status='Replied' AND view_status=0 AND team_code=$teamCode ORDER BY date_replied DESC");
+              $queryRequisitions = mysqli_query($connection, "SELECT * FROM requisition WHERE status='Replied' AND view_status!=1 AND team_code=$teamCode ORDER BY date_replied DESC");
               $countRequisition = mysqli_num_rows( $queryRequisitions);
 
-              $queryExpiredDate = mysqli_query($connection, "SELECT * FROM item WHERE expiry_date < DATE_ADD(NOW(), INTERVAL 90 DAY) AND team_code=$teamCode");
+              $queryExpiredDate = mysqli_query($connection, "SELECT * FROM item WHERE expiry_date < DATE_ADD(NOW(), INTERVAL 90 DAY)");
               $countExpiryDate= mysqli_num_rows($queryExpiredDate);
 			  
-			  $queryStockLevel = mysqli_query($connection, "SELECT * FROM item WHERE quantity <= minimum_stock_level OR maximum_stock_level > quantity AND team_code=$teamCode ORDER BY quantity ASC");
+			  $queryStockLevel = mysqli_query($connection, "SELECT * FROM item WHERE quantity <= 20 AND team_code=$teamCode ORDER BY quantity ASC");
               $countStockLevel = mysqli_num_rows($queryStockLevel);
                
               $countAllNotification = $countRequisition + $countExpiryDate +  $countStockLevel;
@@ -233,7 +234,7 @@
                }
                ?>
           <div class="dropdown-divider"></div>
-          <a href="requisition-summary.php" class="dropdown-item">
+          <a href="#" class="dropdown-item">
             <?php 
                 if(mysqli_num_rows($queryRequisitions) > 0)
                 {
@@ -249,7 +250,7 @@
                }
                ?>
           <div class="dropdown-divider"></div>
-          <a href="item-expiry-date.php" class="dropdown-item">
+          <a href="#" class="dropdown-item">
             <?php
 
                if(mysqli_num_rows($queryExpiredDate)>0)
@@ -267,7 +268,7 @@
                ?>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="stock-level.php" class="dropdown-item">
+          <a href="#" class="dropdown-item">
 		        <?php
 
                if(mysqli_num_rows($queryStockLevel)>0)
@@ -285,6 +286,7 @@
                ?>
           </a>
           <div class="dropdown-divider"></div>
+         
         </div>
       </li>
       <li class="nav-item">
@@ -299,7 +301,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="warehouse-dash.php" class="brand-link">
+    <a href="finance-dash.php" class="brand-link">
       <img src="../../dist/img/blm_logo.png" alt="Logo" class="brand-image img-circle elevation-3">
       <span class="brand-text font-weight-light">Banja La Mtsogolo</span>
     </a>
@@ -330,12 +332,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Pending Requisitions</h1>
+            <h1 class="m-0">Donated Report</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="warehouse-dash.php">Home</a></li>
-              <li class="breadcrumb-item active">Pending Requisitions</li>
+              <li class="breadcrumb-item"><a href="finance-dash.php">Home</a></li>
+              <li class="breadcrumb-item active">Donated Report</li>
             </ol>
           </div>
         </div><!-- /.row -->
@@ -357,7 +359,7 @@
             <!-- jquery validation -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Pending Requisitions</h3>
+                <h3 class="card-title">Donated Report</h3>
 
                 <div class="card-tools">
                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -372,100 +374,37 @@
                    
             <!-- /.card-body -->
             <div class="card-body">
-              <div class="table-responsive">
-                <!-- table start -->
-               <table class="table table-striped table-advance table-hover table-bordered" id="pending_table">
-                <thead class="text-nowrap">
-                  <tr>
-                    <th>ID</th>
-                    <th>title</th>
-                    <th>Status</th>
-                    <th>Total Price</th>
-                    <th>Description</th>
-                    <th>Date Requested</th>
-                    <th>Team Code</th>
-                    <th><i class="fa fa-tools"></i>&nbsp;Action</th>
-                  </tr>
-                </thead>
-                <tbody> 
-                    <?php 
-                    if(mysqli_num_rows($results) >0)
-                    {
-                     foreach ($requisitions as $requisition)
-                      {
-                        ?>
-                  <tr>
-                     <td><?= $requisition['requisition_id']; ?></td>
-                     <td><?= $requisition['title']; ?></td>
-                     <td><?= $requisition['status']; ?></td>
-                     <td><?= number_format($requisition['total_price'], 2); ?></td>
-                     <td><?= $requisition['description']; ?></td>
-                     <td class="text-nowrap"><?= $requisition['date_requested']; ?></td>
-                     <td><a href="team-detail.php?team_code=<?= $requisition['team_code']; ?>"><?= $requisition['team_code']; ?></a></td>
-                     <td class="text-nowrap">
-                       <div class="btn-group">
-                          <a class="btn btn-primary btn-sm" href="requisition-details.php?requisition_id=<?= $requisition['requisition_id']; ?>"><i class="fa fa-file-invoice">&nbsp;View Details</i></a>
-                       </div>
-                    </td>
-                  </tr>
-                      <?php 
-                     }?>
-                     <?php 
-                    }
-                    else{
-                      echo '<tr><td colspan="8" class="text text-danger font-weight-bold">There are currently no pending requisitions</td></tr>';
-                    }?>
-                </tbody>
-              </table>
-              <!-- /.end table -->
+			<div id="alert-message"></div>
+            <div class="table-responsive">
+                
               </div>
-                <!-- /.card-body -->
+                <!-- .card-footer -->
                 <div class="card-footer">
-                  <nav aria-label="...">
-                    <ul class="pagination pagination-sm"> 
-                    <?php if($page > 1){ ?>
-                    <li class="page-item">
-                        <a class="page-link" href="pending-requisition.php?page=<?= $previous; ?>">Previous</a>
-                      </li>
-                      <?php 
-                       } else { ?>
-                      <li class="page-item disabled">
-                        <span class="page-link" href="javascript:avoid(0)">Previous</span>
-                      </li>
-                      <?php } ?>
-                      
-                      <?php for($i = 1; $i <= $pages; $i++) : ?>
-                      <li class="page-item <?= $page == $i ? 'active':'' ?>" aria-current="page">
-                            <a class="page-link" href="pending-requisition.php?page=<?= $i; ?>"><?= $i; ?></a>
-                      </li>
-                      <?php endfor; ?>
-                       
-                      <?php if(($i > $page) && ($page < $pages)){ ?>
-                      <li class="page-item">
-                        <a class="page-link" href="pending-requisition.php?page=<?= $next; ?>">Next</a>
-                      </li>
-                      <?php 
-                       } else { ?>
-                      <li class="page-item disabled">
-                        <span class="page-link" href="javascript:avoid(0)">Next</span>
-                      </li>
-                      <?php } ?>
-                    </ul>
-                  </nav>
+                   
+				  
                 </div>
-              
+				<!-- /.card footer -->
+                 
             </div>
             <!-- /.card body -->
            </div>
 		   <!-- /.card -->
+		  
+		     <div class="row">
+		      <div class="col-sm-6">
+			    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+				  <button type="submit" class="btn btn-success" name="export-stock" id="export-stock"><i class="fa fa-file-excel">&nbsp;Export to Excel</i></button>
+			    </form>
+			  </div>
+			 </div>
         </div>
+		
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  
   <footer class="main-footer">
     <strong>Copyright &copy; 2021 <a target="_blank" href="https://xpartsmw.com">XParts IT Solutions</a>.</strong>
     All rights reserved.
@@ -482,57 +421,20 @@
 <!-- ./wrapper -->
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- jquery-validation -->
-<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
-<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
-<!-- jquery-for validating order form -->
-<script src="../../dist/js/order-form-validation.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
 <!-- Bootstrap 4 -->
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- overlayScrollbars -->
 <script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- Select2 -->
-<script src="../../plugins/select2/js/select2.full.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.js"></script>
+
 </body>
 </html>
-
-<?php include '../includes/includes_footer.php';?>
-<script>
-    $(document).ready(function() {
-        $('#pending_table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: 'th:not(:last-child)'
-                    }
-                }, {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: 'th:not(:last-child)'
-                    }
-                }, {
-                    extend: 'print',
-                    exportOptions: {
-                        columns: 'th:not(:last-child)'
-                    }
-                },  {
-                    extend: 'pdfHtml5',
-                    exportOptions: {
-                        columns: 'th:not(:last-child)'
-                    }
-                },
-                'colvis'
-            ],
-            "paging":   false,
-            "ordering": false,
-            "info":     false
-        });
-    });
-</script>
